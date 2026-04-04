@@ -8,32 +8,44 @@ int main(void)
 	char* ip;
 	char* puerto;
 	char* valor;
+	char* linea;
 
 	t_log* logger;
 	t_config* config;
 
 	/* ---------------- LOGGING ---------------- */
 
-	logger = iniciar_logger();
+	logger = log_create("tpo.log", "Cliente",1,LOG_LEVEL_INFO);
 
 	// Usando el logger creado previamente
 	// Escribi: "Hola! Soy un log"
-
+	log_info(logger,"soy un log");
 
 	/* ---------------- ARCHIVOS DE CONFIGURACION ---------------- */
 
-	config = iniciar_config();
-
+	config = config_create("cliente.config");
+	if (config == NULL) {
+		// en caso de que no se pueda cargar el archivo de config abortar ejecucion
+		log_error(logger, "no se pudo cargar el archivo de config");
+		abort();
+	}
 	// Usando el config creado previamente, leemos los valores del config y los 
 	// dejamos en las variables 'ip', 'puerto' y 'valor'
-
+	ip=config_get_string_value(config, "IP");
+    puerto=config_get_string_value(config, "PUERTO");
+	valor=config_get_string_value(config, "CLAVE");
+	
 	// Loggeamos el valor de config
 
+	log_info(logger, valor);	
 
 	/* ---------------- LEER DE CONSOLA ---------------- */
 
-	leer_consola(logger);
-
+	
+	linea =readline("Ingrese valor: ");
+	 log_info(logger,linea);
+	free(linea);
+	//FALTA HACER BUCLE DE LINEAS
 	/*---------------------------------------------------PARTE 3-------------------------------------------------------------*/
 
 	// ADVERTENCIA: Antes de continuar, tenemos que asegurarnos que el servidor esté corriendo para poder conectarnos a él
@@ -41,7 +53,9 @@ int main(void)
 	// Creamos una conexión hacia el servidor
 	conexion = crear_conexion(ip, puerto);
 
+
 	// Enviamos al servidor el valor de CLAVE como mensaje
+	enviar_mensaje(valor,conexion);
 
 	// Armamos y enviamos el paquete
 	paquete(conexion);
@@ -97,4 +111,7 @@ void terminar_programa(int conexion, t_log* logger, t_config* config)
 {
 	/* Y por ultimo, hay que liberar lo que utilizamos (conexion, log y config) 
 	  con las funciones de las commons y del TP mencionadas en el enunciado */
+	  config_destroy(config);
+	  log_destroy(logger);
+	
 }
