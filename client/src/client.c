@@ -19,7 +19,7 @@ int main(void)
 
 	// Usando el logger creado previamente
 	// Escribi: "Hola! Soy un log"
-	log_info(logger,"soy un log");
+	log_info(logger,"soy un log de Fedes");
 
 	/* ---------------- ARCHIVOS DE CONFIGURACION ---------------- */
 
