@@ -42,10 +42,7 @@ int main(void)
 	/* ---------------- LEER DE CONSOLA ---------------- */
 
 	
-	linea =readline("Ingrese valor: ");
-	 log_info(logger,linea);
-	free(linea);
-	//FALTA HACER BUCLE DE LINEAS
+	leer_consola(logger);
 	/*---------------------------------------------------PARTE 3-------------------------------------------------------------*/
 
 	// ADVERTENCIA: Antes de continuar, tenemos que asegurarnos que el servidor esté corriendo para poder conectarnos a él
@@ -88,24 +85,32 @@ void leer_consola(t_log* logger)
 	leido = readline("> ");
 
 	// El resto, las vamos leyendo y logueando hasta recibir un string vacío
-
+	while(strcmp(leido, "")){
+		log_info(logger,"leido: %s", leido);
+		leido = readline("> ");
+	}
 
 	// ¡No te olvides de liberar las lineas antes de regresar!
-
+	free(leido);
 }
 
 void paquete(int conexion)
 {
 	// Ahora toca lo divertido!
 	char* leido;
-	t_paquete* paquete;
+	t_paquete* paquete = crear_paquete();
 
 	// Leemos y esta vez agregamos las lineas al paquete
-
+	while(strcmp(leido, "")){
+		agregar_a_paquete(paquete, leido, strlen(leido)+1);
+		leido = readline("> ");
+	}
 
 	// ¡No te olvides de liberar las líneas y el paquete antes de regresar!
-	
-}
+	free(leido);
+	enviar_paquete(paquete, conexion);
+	eliminar_paquete(paquete);
+	}
 
 void terminar_programa(int conexion, t_log* logger, t_config* config)
 {
